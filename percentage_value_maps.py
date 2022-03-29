@@ -29,6 +29,15 @@ def print_avgs(category_dict):
         print(category_dict[key])
 
 
+def sort_category_by_value(category_dict):
+    sorted_list = list(category_dict.keys())
+    sorted_list.sort()
+    sorted_dict = {}
+    for key in sorted_list:
+        sorted_dict[key] = category_dict[key]
+    return sorted_dict
+
+
 def avg_price_per_category(data, category):
     category_dict = {}
     for row in data:
@@ -46,6 +55,14 @@ def avg_price_per_category(data, category):
 
 def select_distinct_column(file_name, column_name):
     data = csv_handler.read_csv(file_name)
+    distinct_column_list = []
+    for row in data:
+        if row[column_name] not in distinct_column_list:
+            distinct_column_list.append(row[column_name])
+    return distinct_column_list
+
+
+def select_distinct_column_from_data(data, column_name):
     distinct_column_list = []
     for row in data:
         if row[column_name] not in distinct_column_list:

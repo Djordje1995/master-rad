@@ -70,7 +70,8 @@ def print_file(file):
 def remove_difficult_data(file):
     new_file = []
     for row in file:
-        if row[constant.TRANSMISSION] != 'Other' and row[constant.FUEL_TYPE] != 'Other':
+        if row[constant.TRANSMISSION] != 'Other' and row[constant.FUEL_TYPE] != 'Other'\
+                and 1990 <= int(row[constant.YEAR]) <= 2021 and row[constant.ENGINE_SIZE] != '0':
             new_file.append(row)
     return new_file
 
@@ -87,7 +88,7 @@ def recreate_file(file_name):
 
     file = csv_handler.read_csv(read_file)
     new_file = remove_difficult_data(file)
-    csv_handler.write_csv(new_file, write_file)
+    csv_handler.write_csv(new_file, write_file, csv_handler.get_header())
 
 
 def recreate_testing_file(file_name):
