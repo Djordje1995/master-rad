@@ -1,6 +1,6 @@
 import constant
 import csv_handler
-import median_calculator
+import median_calculator_serbian
 
 TOTAL = 'total'
 COUNT = 'count'
@@ -69,18 +69,48 @@ def select_distinct_column_from_data(data, column_name):
             distinct_column_list.append(row[column_name])
     return distinct_column_list
 
-
-def get_transmission_map():
-    return median_calculator.get_median_percentage_list(constant.TRANSMISSION)
-
-
-def get_fuel_type_map():
-    return median_calculator.get_median_percentage_list(constant.FUEL_TYPE)
+################## all maps ####################
 
 
 def get_brand_map():
-    return median_calculator.get_median_percentage_list(constant.BRAND)
+    return median_calculator_serbian.get_median_list('Marka')
 
 
 def get_model_map():
-    return median_calculator.get_module_percentage_list()
+    return median_calculator_serbian.get_median_list('Model')
+
+
+def get_year_map():
+    return median_calculator_serbian.get_median_list('Godište')
+
+
+def get_mileage_map():
+    return median_calculator_serbian.get_median_list('Kilometraža')
+
+
+def get_car_body_map():
+    return median_calculator_serbian.get_median_list('Karoserija')
+
+
+def get_fuel_type_map():
+    return median_calculator_serbian.get_median_list('Gorivo')
+
+
+def get_engine_size_map():
+    return median_calculator_serbian.get_median_list('Kubikaža')
+
+
+def get_engine_power_map():
+    return median_calculator_serbian.get_median_list('Snaga motora')
+
+
+def get_emission_class_map():
+    return median_calculator_serbian.get_median_list('Emisiona klasa motora')
+
+
+def get_drive_map():
+    return median_calculator_serbian.get_median_list('Pogon')
+
+
+def get_transmission_map():
+    return median_calculator_serbian.get_median_list('Menjač')

@@ -4,7 +4,7 @@ import percentage_value_maps
 
 
 def find_min_year():
-    data = csv_handler.read_csv(constant.LEARNING_DATA)
+    data = csv_handler.get_learning_data()
     oldest_car = 2020
     for row in data:
         if int(row[constant.YEAR]) < oldest_car:
@@ -13,7 +13,7 @@ def find_min_year():
 
 
 def find_max_mileage():
-    data = csv_handler.read_csv(constant.LEARNING_DATA)
+    data = csv_handler.get_learning_data()
     max_car_mileage = 0
     for row in data:
         if int(row[constant.MILEAGE]) > max_car_mileage:
@@ -22,7 +22,7 @@ def find_max_mileage():
 
 
 def find_min_max_tax():
-    data = csv_handler.read_csv(constant.LEARNING_DATA)
+    data = csv_handler.get_learning_data()
     min_taxes = 200
     max_taxes = 0
     for row in data:
@@ -39,28 +39,31 @@ min_max_tax = find_min_max_tax()
 
 
 def calculate_brand_value(brand):
-    return percentage_value_maps.get_brand_map()[brand]
+    return percentage_value_maps.get_brand_map()[brand] / 100
 
 
 def calculate_model_value(model):
-    return percentage_value_maps.get_model_map()[model]
+    return percentage_value_maps.get_model_map()[model] / 100
 
 
 def calculate_year_value(year):
-    return (int(year) - min_year) * 0.5 + 0.5
+    """Median value was used (2017), min = 2002"""
+    # return (int(year) - min_year) * 0.5 + 0.5
+    return int(year) - 2002 + 1
 
 
 def calculate_transmission_value(transmission):
-    return percentage_value_maps.get_transmission_map()[transmission]
+    return percentage_value_maps.get_transmission_map()[transmission] / 100
 
 
 def calculate_mileage_value(mileage):
-    return (max_mileage - int(mileage)) * 0.05 + 0.05
+    """The median value was used (19170), avg (24438)"""
+    """maximum is 149958.0, this is used so that the value is always positive"""
+    return (149958 - int(mileage) + 100) / 1000
 
 
 def calculate_fuel_type_value(fuel_type):
-    """hardcoded initial values based on internet research of fuel type"""
-    return percentage_value_maps.get_fuel_type_map()[fuel_type]
+    return percentage_value_maps.get_fuel_type_map()[fuel_type] / 100
 
 
 def calculate_tax_value(tax):
@@ -72,19 +75,22 @@ def calculate_tax_value(tax):
 
 
 def calculate_mpg_value(mpg):
+    """55 mpg is avg(median)"""
     """more miles per gallon, less the consumption, higher buying price"""
-    return float(mpg.replace(',', '.'))
+    """minimum is 20.8, this is used so that the value is always positive"""
+    return (mpg - 20.8) + 5
 
 
 def calculate_engine_size_value(engine_size):
     """higher engine size, higher buying price"""
-    return float(engine_size.replace(',', '.'))
+    """1.6 is median for engine_size, and 1.0 is a minimum, this is used so that the value is always positive"""
+    return (engine_size - 1.0) + 0.3
 
 
 def get_calculated_values(column, value):
     switcher = {
         constant.BRAND: calculate_brand_value,
-        constant.MODEL: calculate_model_value,
+        constant.BR_MODEL: calculate_model_value,
         constant.YEAR: calculate_year_value,
         constant.TRANSMISSION: calculate_transmission_value,
         constant.MILEAGE: calculate_mileage_value,

@@ -1,25 +1,21 @@
 import constant
 import column_value_calculator
 from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score
 import csv_handler
+import linear_regression_visualisation
 
 
 def fill_data(row, x, y):
+    """ fills the corresponding x and y matrix for linear regression"""
     temp = []
     for item in row:
-        if item == constant.PRICE:
-            y.append(int(row[item]))
-        else:
-            temp.append(column_value_calculator.get_calculated_values(item, row[item]))
+        if item in csv_handler.get_header():
+            if item == constant.PRICE:
+                y.append(int(row[item]))
+            else:
+                temp.append(column_value_calculator.get_calculated_values(item, row[item]))
     x.append(temp)
-
-
-def fill_x_data(row, x_pred):
-    temp = []
-    for item in row:
-        if item != constant.PRICE:
-            temp.append(column_value_calculator.get_calculated_values(item, row[item]))
-    x_pred.append(temp)
 
 
 def print_item(index, x_item, y_item, test_price):
@@ -46,21 +42,28 @@ def calculate_absolute_difference(actual_value, predicted_value):
 
 
 def calculate_percentage_difference(actual_value, predicted_value):
-    return (calculate_absolute_difference(actual_value, predicted_value) / float(actual_value)) * 100
+    return ((predicted_value - actual_value) / float(actual_value)) * 100
 
 
 def write_test_predicted_csv(file_name, test_data, y_pred):
     i = 0
-    while i < test_data.__len__():
-        test_data[i][constant.PREDICTED_PRICE] = round(y_pred[i], 2)
-        test_data[i][constant.ABSOLUTE_DIFFERENCE] = round(calculate_absolute_difference(test_data[i][constant.PRICE], y_pred[i]), 2)
-        test_data[i][constant.PERCENTAGE] = round(calculate_percentage_difference(test_data[i][constant.PRICE], y_pred[i]), 2)
+    for row in test_data:
+        row[constant.PREDICTED_PRICE] = round(y_pred[i], 2)
+        row[constant.ABSOLUTE_DIFFERENCE] = round((y_pred[i] - float(row[constant.PRICE])), 2)
+        row[constant.PERCENTAGE] = round(calculate_percentage_difference(float(row[constant.PRICE]), y_pred[i]), 2)
         i += 1
     header = csv_handler.get_header()
     header.append(constant.PREDICTED_PRICE)
     header.append(constant.ABSOLUTE_DIFFERENCE)
     header.append(constant.PERCENTAGE)
     csv_handler.write_csv(test_data, file_name, header)
+
+
+def evaluate_results(y_test, y_pred):
+    evaluation = r2_score(y_test, y_pred)
+    print("R^2 (coefficient of determination) regression score function:")
+    print(evaluation)
+    linear_regression_visualisation.visualise_predicted_results(y_test, y_pred)
 
 
 def train(data):
@@ -70,10 +73,21 @@ def train(data):
         fill_data(row, x, y)
     model = LinearRegression()
     model.fit(x, y)
-    test_data = csv_handler.read_csv(constant.TESTING_DATA)
-    x_pred = []
+    test_data = csv_handler.get_testing_data()
+    x_test = []
+    y_test = []
     for row in test_data:
-        fill_x_data(row, x_pred)
-    y_pred = model.predict(x_pred)
+        fill_data(row, x_test, y_test)
+    y_pred = model.predict(x_test)
+    count = 0
+    i = 0
+    for value in y_pred:
+        if value < 0:
+            count += 1
+            print(list(test_data)[i])
+            print(value)
+        i += 1
+    print(count)
+    evaluate_results(y_test, y_pred)
     write_test_predicted_csv(constant.LINEAR_REGRESSION_RESULT, test_data, y_pred)
     # print_and_compare(y_pred, test_data)

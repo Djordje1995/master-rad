@@ -1,39 +1,32 @@
+import numpy as np
 import constant
 import csv_handler
 import file_reformator
+import knn_visualisation
+import linear_regression_serbian
+import median_calculator
+import median_calculator_serbian
 import percentage_value_maps
 import linear_regression
 import time
 import k_nearest_neighbors
+import pandas as pd
 
-
-file_reformator.recreate_file(constant.LEARNING)
 
 # file_reformator.recreate_file(constant.LEARNING)
-# print("Transmission")
-# percentage_value_maps.print_avgs(
-#     percentage_value_maps.calculate_differences_in_percentage(
-#         percentage_value_maps.avg_price_per_category(
-#             csv_handler.read_csv(constant.LEARNING_DATA), constant.TRANSMISSION)))
-# print("Fuel type")
-# percentage_value_maps.print_avgs(
-#     percentage_value_maps.calculate_differences_in_percentage(
-#         percentage_value_maps.avg_price_per_category(
-#             csv_handler.read_csv(constant.LEARNING_DATA), constant.FUEL_TYPE)))
-# print("Engine size")
-# percentage_value_maps.print_avgs(
-#     percentage_value_maps.sort_category_by_value(
-#         percentage_value_maps.calculate_differences_in_percentage(
-#             percentage_value_maps.avg_price_per_category(
-#                 csv_handler.read_csv(constant.LEARNING_DATA), constant.ENGINE_SIZE))))
-# print("miles per gallon")
-# percentage_value_maps.print_avgs(
-#     percentage_value_maps.sort_category_by_value(
-#         percentage_value_maps.calculate_differences_in_percentage(
-#             percentage_value_maps.avg_price_per_category(
-#                 csv_handler.read_csv(constant.LEARNING_DATA), constant.MPG))))
-# tart_time = time.process_time()
-# linear_regression.train(csv_handler.read_csv(constant.LEARNING_DATA))
-# 1.640625 seconds
+# file_reformator.recreate_file(constant.TESTING)
+
+# learning_data = csv_handler.get_learning_data()
+# testing_data = csv_handler.get_testing_data()
+
+# learning_data = csv_handler.get_learning_data_serbian()
+# testing_data = csv_handler.get_testing_data_serbian()
+#
+# median_calculator.populate_lists()
+# linear_regression_serbian.train(learning_data)
+
 # k_nearest_neighbors.train()
-# print(time.process_time() - start_time, "seconds")
+# knn_visualisation.visualize()
+# count = 0
+# file_reformator.reformat_new_data_file(constant.CAR_LINKS)
+# file_reformator.clean_data()
