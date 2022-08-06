@@ -1,20 +1,13 @@
-import column_value_calculator
-import constant
-import csv_handler
+from utils import csv_handler, constant, column_value_calculator
 import math
 import pandas as pd
 import knn_visualisation
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import confusion_matrix
-from sklearn.metrics import accuracy_score
 from sklearn.metrics import plot_confusion_matrix
 from sklearn.metrics import classification_report
 import matplotlib.pyplot as plt
 import time
-from sklearn.preprocessing import StandardScaler
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import RandomizedSearchCV
-from scipy.stats import randint
 
 
 def y_data_map():

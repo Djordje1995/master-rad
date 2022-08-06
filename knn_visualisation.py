@@ -4,7 +4,7 @@ from sklearn.neighbors import KNeighborsClassifier
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
-import constant
+from utils import constant
 import k_nearest_neighbors
 
 
