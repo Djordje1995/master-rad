@@ -63,11 +63,11 @@ class NaiveBayesSerbian:
         return self.model
 
     def train(self):
+        print()
+        print("Naive bayes:")
         start = time.time()
         self.model.fit(self.x_train, self.y_train)
         end = time.time()
-        print()
-        print("Naive bayes:")
         print("Training time: ", end - start, " seconds")
         # print_price_map(self.training_data)
         self.evaluate_test_results()

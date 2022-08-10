@@ -2,23 +2,27 @@ import sys
 from PyQt5.QtWidgets import QApplication, QDialog
 from utils import util, constant
 import price_prediction_gui
-import loading_indicator
-import all_algorithms
+from loading_indicator import LoadingIndicator
+from all_algorithms import Algorithms
 
 
-algorithms = ['Linear regression',
-              'Polynomial regression',
-              'Lasso regression',
-              'Ridge regression',
-              # 'Multinomial logistic regression'
-              'Naive bayes',
-              'Support vector machine polynomial',
-              'Support vector machine rbf',
-              'K Nearest neighbours euclidean',
-              'K Nearest neighbours manhattan',
-              'K Nearest neighbours chebyshev',
-              'K Nearest neighbours minkowski',
-              'K Nearest neighbours cosine'
+algorithms = [
+                'Linear regression',
+                'Polynomial regression',
+                'Lasso regression',
+                'Ridge regression',
+                'Multinomial logistic regression (solver: newton-cg)',
+                'Multinomial logistic regression (solver: saga)',
+                'Multinomial logistic regression (solver: sag)',
+                'Naive bayes',
+                'Support vector machine (kernel: polynomial)',
+                'Support vector machine (kernel: rbf)',
+                'K Nearest neighbours euclidean',
+                'K Nearest neighbours manhattan',
+                'K Nearest neighbours chebyshev',
+                'K Nearest neighbours minkowski',
+                'K Nearest neighbours cosine',
+                'Random forests classifier'
               ]
 
 
@@ -31,12 +35,12 @@ class MyApp(QDialog, price_prediction_gui.Ui_Dialog):
         self.brand_select.currentIndexChanged.connect(self.update_model_select_box)
         self.predict_button.pressed.connect(self.fire_prediction)
 
-        self.loading_indicator = loading_indicator.LoadingIndicator()
+        # self.loading_indicator = LoadingIndicator()
+        self.all_algorithms = Algorithms()
 
-        self.loading_indicator.startAnimation()
-        self.all_algorithms = all_algorithms.Algorithms()
+        # self.loading_indicator.startAnimation()
         self.all_algorithms.train_all_algorithms()
-        self.loading_indicator.stopAnimation()
+        # self.loading_indicator.stopAnimation()
 
     def init_combo_box(self):
         brands_with_modules = util.get_brands_with_modules()

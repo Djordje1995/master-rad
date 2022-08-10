@@ -1,10 +1,7 @@
-import matplotlib.pyplot as plt
-import sklearn.model_selection as model_selection
-from sklearn.svm import SVC
-from sklearn.metrics import r2_score, confusion_matrix, f1_score, accuracy_score
 import seaborn as sns
-import pandas as pd
-from utils import constant
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import confusion_matrix, accuracy_score, f1_score, r2_score
+import matplotlib.pyplot as plt
 import time
 
 
@@ -31,25 +28,7 @@ def confusion_matrix_display(y_test, y_pred):
     print(cm)
 
 
-def print_price_map(data):
-    full_data = pd.DataFrame(data)
-    prices = full_data[constant.CENA]
-    prices.to_numpy().sort()
-    for item in prices:
-        print(item)
-    n_of_classes = 5
-    increment = int(len(prices) / 5)
-    i = 1
-    classes = []
-    while i <= n_of_classes:
-        item = prices[increment * i - 1]
-        i += 1
-        print(item)
-        classes.append(item)
-    return classes
-
-
-class SVMSerbian:
+class RandomForestClassifierSerbian:
 
     def __init__(self, training_data, testing_data, x_train, y_train, x_test, y_test):
         self.training_data = training_data
@@ -58,28 +37,23 @@ class SVMSerbian:
         self.y_train = y_train
         self.x_test = x_test
         self.y_test = y_test
-        self.model_poly = SVC(kernel='poly', degree=3, C=1)
-        self.model_rbf = SVC(kernel='rbf', gamma='scale', C=1)
+        self.model = RandomForestClassifier()
 
-    def get_model(self, kernel):
-        switcher = {
-            'poly': self.model_poly,
-            'rbf': self.model_rbf
-        }
-        return switcher[kernel]
+    def get_model(self):
+        return self.model
 
-    def train(self, kernel):
-        print()
-        print("Support vector machine (kernel: ", kernel, ")")
+    def train(self):
         start = time.time()
-        self.get_model(kernel).fit(self.x_train, self.y_train)
+        self.model.fit(self.x_train, self.y_train)
         end = time.time()
+        print()
+        print("Random forest classifier:")
         print("Training time: ", end - start, " seconds")
-        self.evaluate_test_results(kernel)
+        self.evaluate_test_results()
 
-    def evaluate_test_results(self, kernel):
+    def evaluate_test_results(self):
         start = time.time()
-        pred = self.get_model(kernel).predict(self.x_test)
+        pred = self.model.predict(self.x_test)
         end = time.time()
         print("Testing time: ", end - start, " seconds")
         evaluation = r2_score(self.y_test, pred)
@@ -89,4 +63,4 @@ class SVMSerbian:
         print('Accuracy: ', "%.2f" % (accuracy * 100))
         print('F1: ', "%.2f" % (f1 * 100))
         confusion_matrix_display(self.y_test, pred)
-
+        # visualise_predicted_results(self.y_test, y_pred)

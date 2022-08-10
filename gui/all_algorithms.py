@@ -1,6 +1,4 @@
 import numpy as np
-
-from algorithms.classification.multinomial_logistic_regression import MultinomialLogisticRegressionSerbian
 from utils import column_value_calculator_serbian
 from utils import constant
 from utils import csv_handler
@@ -9,22 +7,27 @@ from algorithms.regression.linear_regression_serbian import LinearRegressionSerb
 from algorithms.regression.polynomial_regression_serbian import PolynomialRegressionSerbian
 from algorithms.regression.lasso_regression_serbian import LassoRegressionSerbian
 from algorithms.regression.ridge_regression_serbian import RidgeRegressionSerbian
+from algorithms.classification.multinomial_logistic_regression import MultinomialLogisticRegressionSerbian
 from algorithms.classification.naive_bayes_serbian import NaiveBayesSerbian
 from algorithms.classification.support_vector_machines_serbian import SVMSerbian
 from algorithms.classification.knn_serbian import KNNSerbian
-
+from algorithms.classification.random_forests_serbian import RandomForestClassifierSerbian
 
 median_calculator_serbian.populate_lists()
 
 classification_algorithms = [
+            'Multinomial logistic regression (solver: newton-cg)',
+            'Multinomial logistic regression (solver: saga)',
+            'Multinomial logistic regression (solver: sag)',
             'Naive bayes',
-            'Support vector machine polynomial',
-            'Support vector machine rbf',
-            'K Nearest neighbours euclidean',
-            'K Nearest neighbours manhattan',
-            'K Nearest neighbours chebyshev',
-            'K Nearest neighbours minkowski',
-            'K Nearest neighbours cosine'
+            'Support vector machine (kernel: polynomial)',
+            'Support vector machine (kernel: rbf)',
+            'K Nearest neighbours (metric: euclidean)',
+            'K Nearest neighbours (metric: manhattan)',
+            'K Nearest neighbours (metric: chebyshev)',
+            'K Nearest neighbours (metric: minkowski)',
+            'K Nearest neighbours (metric: cosine)',
+            'Random forests classifier'
 ]
 
 y_data_map = {constant.MANJE_OD_2000: 0,
@@ -78,11 +81,11 @@ class Algorithms:
         self.polynomial_regression_model = {}
         self.lasso_regression_model = {}
         self.ridge_regression_model = {}
-        # self.multinomial_logistic_regression_model = {}
+        self.multinomial_logistic_regression_model = {}
         self.naive_bayes_model = {}
-        self.svm_model_poly = {}
-        self.svm_model_rbf = {}
+        self.svm_model = {}
         self.knn_model = {}
+        self.random_forests_model = {}
 
     def get_model(self, algorithm):
         switcher = {
@@ -90,15 +93,18 @@ class Algorithms:
             'Polynomial regression': self.polynomial_regression_model.get_model(),
             'Lasso regression': self.lasso_regression_model.get_model(),
             'Ridge regression': self.ridge_regression_model.get_model(),
-            # 'Multinomial logistic regression': self.multinomial_logistic_regression_model
+            'Multinomial logistic regression (solver: newton-cg)': self.multinomial_logistic_regression_model.get_model("newton-cg"),
+            'Multinomial logistic regression (solver: saga)': self.multinomial_logistic_regression_model.get_model("saga"),
+            'Multinomial logistic regression (solver: sag)': self.multinomial_logistic_regression_model.get_model("sag"),
             'Naive bayes': self.naive_bayes_model.get_model(),
-            'Support vector machine polynomial': self.svm_model_poly.get_model_poly(),
-            'Support vector machine rbf': self.svm_model_rbf.get_model_rbf(),
+            'Support vector machine (kernel: polynomial)': self.svm_model.get_model("poly"),
+            'Support vector machine (kernel: rbf)': self.svm_model.get_model("rbf"),
             'K Nearest neighbours euclidean': self.knn_model.get_model("euclidean"),
             'K Nearest neighbours manhattan': self.knn_model.get_model("manhattan"),
             'K Nearest neighbours chebyshev': self.knn_model.get_model("chebyshev"),
             'K Nearest neighbours minkowski': self.knn_model.get_model("minkowski"),
-            'K Nearest neighbours cosine': self.knn_model.get_model("cosine")
+            'K Nearest neighbours cosine': self.knn_model.get_model("cosine"),
+            'Random forests classifier': self.random_forests_model.get_model()
         }
         return switcher[algorithm]
 
@@ -126,7 +132,7 @@ class Algorithms:
         for row in testing_data:
             fill_data(row, x_test, y_test, y_test_class)
 
-        # linear regression model training
+        # REGRESSION ALGORITHMS
         self.linear_regression_model = LinearRegressionSerbian(training_data, testing_data, x_train, y_train, x_test, y_test)
         self.linear_regression_model.train()
 
@@ -139,16 +145,18 @@ class Algorithms:
         self.ridge_regression_model = RidgeRegressionSerbian(training_data, testing_data, x_train, y_train, x_test, y_test)
         self.ridge_regression_model.train()
 
-        # self.multinomial_logistic_regression_model = MultinomialLogisticRegressionSerbian(training_data, testing_data, x_train, y_train_class, x_test, y_test_class)
-        # self.multinomial_logistic_regression_model.train()
+        # CLASSIFICATION ALGORITHMS
+        self.multinomial_logistic_regression_model = MultinomialLogisticRegressionSerbian(training_data, testing_data, x_train, y_train_class, x_test, y_test_class)
+        self.multinomial_logistic_regression_model.train("newton-cg")
+        self.multinomial_logistic_regression_model.train("saga")
+        self.multinomial_logistic_regression_model.train("sag")
 
         self.naive_bayes_model = NaiveBayesSerbian(training_data, testing_data, x_train, y_train_class, x_test, y_test_class)
         self.naive_bayes_model.train()
 
-        self.svm_model_rbf = SVMSerbian(training_data, testing_data, x_train, y_train_class, x_test, y_test_class)
-        self.svm_model_poly = self.svm_model_rbf
-        self.svm_model_poly.train_poly()
-        # self.svm_model_rbf.train_rbf()
+        self.svm_model = SVMSerbian(training_data, testing_data, x_train, y_train_class, x_test, y_test_class)
+        self.svm_model.train("poly")
+        self.svm_model.train("rbf")
 
         self.knn_model = KNNSerbian(training_data, testing_data, x_train, y_train_class, x_test, y_test_class)
         self.knn_model.train("euclidean")
@@ -156,4 +164,7 @@ class Algorithms:
         self.knn_model.train("chebyshev")
         self.knn_model.train("minkowski")
         self.knn_model.train("cosine")
+
+        self.random_forests_model = RandomForestClassifierSerbian(training_data, testing_data, x_train, y_train_class, x_test, y_test_class)
+        self.random_forests_model.train()
 
